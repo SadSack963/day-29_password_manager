@@ -1,8 +1,35 @@
-import tkinter as tk
+import tkinter as tk  # import tkinter classes
+# NOTE: messagebox is a separate module from tkinter which is not imported unless specified
+from tkinter import messagebox
+import generator
+
+
+
+
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
+def generate():
+    generator.generator_popup()
+
+
 # ---------------------------- SAVE PASSWORD ------------------------------- #
+
+def save():
+    website = entry_website.get()
+    email = entry_email.get()
+    password = entry_password.get()
+    if len(website) < 1 or len(email) < 1 or len(password) < 1:
+        messagebox.showinfo(title="Error", message="Please fill in all fields.")
+    else:
+        response = messagebox.askokcancel(title="Please confirm", message=f"Website: {website}\nEmail: {email}\nPassword: {password}\n\nOK to save?")
+        if response:
+            # encoding="utf-16" allows extended unicode characters to be written to file
+            with open("data.txt", mode="a", encoding="utf-16") as file:
+                file.write(website + ", " + email + ", " + password + "\n")
+            entry_website.delete(0, tk.END)
+            entry_password.delete(0, tk.END)
+
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -19,11 +46,13 @@ label_email = tk.Label(text="Email / Username:")
 label_password = tk.Label(text="Password:")
 
 entry_website = tk.Entry(width=35)
+entry_website.focus()
 entry_email = tk.Entry(width=35)
+entry_email.insert(0, "jwmp5051@gmail.com")  # Insert string just before the character indicated by index.
 entry_password = tk.Entry(width=21)
 
-button_generate = tk.Button(text="Generate Password")
-button_add = tk.Button(text="Add", width=36)
+button_generate = tk.Button(text="Generate Password", command=generate)
+button_add = tk.Button(text="Add", width=36, command=save)
 
 
 # Grid layout
