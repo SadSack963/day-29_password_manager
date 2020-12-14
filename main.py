@@ -1,6 +1,7 @@
 import tkinter as tk  # import tkinter classes
 # NOTE: messagebox is a separate module from tkinter which is not imported unless specified
 from tkinter import messagebox
+import pyperclip
 import generator
 
 TITLE_FONT = ("Sergoe UI", 14, "bold")
@@ -9,17 +10,15 @@ NORMAL_FONT = ("Sergoe UI", 10, "normal")
 LARGE_FONT = ("Sergoe UI", 12, "normal")
 
 
-password_length = 16
-password = ""
-
-
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 def generate():
     generator.get_list_of_chars()
     popup = generator.Popup(window)
+    password = popup.password
     entry_password.delete(0, tk.END)
-    entry_password.insert(0, popup.password)
+    entry_password.insert(0, password)
+    pyperclip.copy(password)
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
