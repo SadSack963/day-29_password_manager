@@ -42,13 +42,11 @@ def get_list_of_chars():
         list_symbol.append(chr(i))
 
 
-class Popup(tk.Tk):
+class Popup():
     """Creates a new popup window containing the widgets allowing the user to create a random password"""
     global list_symbol, list_number, list_lower, list_upper
 
     def __init__(self, master):
-        super(Popup, self).__init__()
-
         # Define variables
         self.password = ""
         self.password_length = 16

@@ -1,0 +1,3 @@
+Amazon, john@example.com, 5kbDI$zv8w1ZcX8C"Cc
+Twitter, john@example.com, 'NemPCj:T~cA$q]i
+Facebook, john@example.com, aSEa4Se2b609qsWh42CJuY

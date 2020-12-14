@@ -33,7 +33,7 @@ def save():
         response = messagebox.askokcancel(title="Please confirm", message=f"Website: {website}\nEmail: {email}\nPassword: {password}\n\nOK to save?")
         if response:
             # encoding="utf-16" allows extended unicode characters to be written to file
-            with open("data.txt", mode="a", encoding="utf-16") as file:
+            with open("data.txt", mode="a", encoding="utf-8") as file:
                 file.write(website + ", " + email + ", " + password + "\n")
             entry_website.delete(0, tk.END)
             entry_password.delete(0, tk.END)
@@ -56,7 +56,7 @@ label_password = tk.Label(window, text="Password:")
 entry_website = tk.Entry(window, width=35)
 entry_website.focus()
 entry_email = tk.Entry(window, width=35)
-entry_email.insert(0, "jwmp5051@gmail.com")  # Insert string just before the character indicated by index.
+entry_email.insert(0, "john@example.com")  # Inserts string just before the character indicated by index.
 entry_password = tk.Entry(window, width=21)
 
 button_generate = tk.Button(window, text="Generate Password", command=generate)
