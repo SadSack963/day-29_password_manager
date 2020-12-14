@@ -1,8 +1,6 @@
 import tkinter as tk  # import tkinter classes
 # NOTE: messagebox is a separate module from tkinter which is not imported unless specified
 from tkinter import messagebox
-import generator
-
 
 
 
@@ -10,7 +8,11 @@ import generator
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 def generate():
-    generator.generator_popup()
+    import generator
+    password = generator.password
+    print(password)
+    entry_password.delete(0, tk.END)
+    entry_password.insert(0, generator.password)
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
@@ -37,22 +39,22 @@ window = tk.Tk()
 window.title("Password Manager")
 window.config(padx=20, pady=20)
 
-canvas = tk.Canvas(width=200, height=200)
+canvas = tk.Canvas(window, width=200, height=200)
 image = tk.PhotoImage(file="logo.png")
 canvas.create_image(100, 100, image=image)
 
-label_website = tk.Label(text="Website:")
-label_email = tk.Label(text="Email / Username:")
-label_password = tk.Label(text="Password:")
+label_website = tk.Label(window, text="Website:")
+label_email = tk.Label(window, text="Email / Username:")
+label_password = tk.Label(window, text="Password:")
 
-entry_website = tk.Entry(width=35)
+entry_website = tk.Entry(window, width=35)
 entry_website.focus()
-entry_email = tk.Entry(width=35)
+entry_email = tk.Entry(window, width=35)
 entry_email.insert(0, "jwmp5051@gmail.com")  # Insert string just before the character indicated by index.
-entry_password = tk.Entry(width=21)
+entry_password = tk.Entry(window, width=21)
 
-button_generate = tk.Button(text="Generate Password", command=generate)
-button_add = tk.Button(text="Add", width=36, command=save)
+button_generate = tk.Button(window, text="Generate Password", command=generate)
+button_add = tk.Button(window, text="Add", width=36, command=save)
 
 
 # Grid layout

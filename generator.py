@@ -1,8 +1,16 @@
 import tkinter as tk
 from random import randint, choice, shuffle
 
+TITLE_FONT = ("Sergoe UI", 14, "bold")
+PWD_FONT = ("Sergoe UI", 12, "bold")
+NORMAL_FONT = ("Sergoe UI", 10, "normal")
+LARGE_FONT = ("Sergoe UI", 12, "normal")
+
+
 password_length = 16
 password = ""
+
+# ---------------------------------
 
 # Generate valid password characters from ASCII codes
 list_upper = []
@@ -36,6 +44,7 @@ for i in range(123, 127):
 # ---------------------------------
 
 def scale(val):
+    # This routine is required because tk.Scale() passes one string value to the called function
     global password_length
     password_length = int(val)
     do_it()
@@ -44,9 +53,9 @@ def scale(val):
 def do_it():
     global password
     password = ""
-    remaining = password_length
+    remaining = password_length  # Number of characters in password yet to be filled
 
-    # Get current values
+    # Get current values of checkboxes and spinboxes
     password_upper = check_upper.get()
     password_lower = check_lower.get()
     password_number = check_number.get()
@@ -55,12 +64,10 @@ def do_it():
     password_symbol_qty = int(spinbox_symbol.get())
 
     # Restrict numbers and symbols to half the password length
-    if password_number and password_number_qty > password_length / 2:
-        password_number_qty = password_length // 2
-        spinbox_number["to"] = password_number_qty
-    if password_symbol and password_symbol_qty > password_length / 2:
-        password_symbol_qty = password_length // 2
-        spinbox_symbol["to"] = password_symbol_qty
+    if password_number:
+        spinbox_number["to"] = password_length // 2
+    if password_symbol:
+        spinbox_symbol["to"] = password_length // 2
 
     # Generate the password
     if password_symbol:
@@ -88,7 +95,15 @@ def do_it():
     label_password["text"] = password
 
 
-# def generator_popup():
+def close():
+    popup.quit()  # This allows the password to be accessed by main.py
+    popup.destroy()  # Then destroy this script window
+    # but then I can't open the window again !?
+
+
+# ---------------------------------
+
+# UI Setup
 
 popup = tk.Tk()
 popup.title("Password Generator")
@@ -102,32 +117,37 @@ check_lower.set(1)  # Default to checked
 check_number = tk.IntVar()
 check_symbol = tk.IntVar()
 
-label_password = tk.Label(text="Password", width=20, height=3, fg="blue", font=("Sergoe UI", 12, "bold"), wraplength=200)
-scale_length = tk.Scale(popup, label="Password Length", from_=6, to=48, length=140, orient=tk.HORIZONTAL, command=scale)
+label_title = tk.Label(popup, text="-- Password Generator --", pady=5, fg="black", font=TITLE_FONT)
+label_password = tk.Label(popup, text="Password", width=20, height=3, relief="sunken", bg="#cccccc", fg="blue", font=PWD_FONT, wraplength=200)
+scale_length = tk.Scale(popup, label="Password Length", from_=6, to=48, length=200, font=NORMAL_FONT, orient=tk.HORIZONTAL, command=scale)
+checkbox_upper = tk.Checkbutton(popup, text="Use A-Z", font=NORMAL_FONT, variable=check_upper, command=do_it)
+checkbox_lower = tk.Checkbutton(popup, text="Use a-z", font=NORMAL_FONT, variable=check_lower, command=do_it)
+checkbox_number = tk.Checkbutton(popup, text="Use 0-9", font=NORMAL_FONT, variable=check_number, command=do_it)
+checkbox_symbol = tk.Checkbutton(popup, text="Use !@#$%^&*", font=NORMAL_FONT, variable=check_symbol, command=do_it)
+spinbox_number = tk.Spinbox(popup, from_=1, to=9, width=3, font=LARGE_FONT, command=do_it)
+spinbox_symbol = tk.Spinbox(popup, from_=1, to=9, width=3, font=LARGE_FONT, command=do_it)
+label_number = tk.Label(popup, text="How many numbers", font=NORMAL_FONT, pady=5)
+label_symbol = tk.Label(popup, text="How many symbols", font=NORMAL_FONT, pady=5)
+button_close = tk.Button(popup, text="Close", font=NORMAL_FONT, command=close)
+
 scale_length.set(password_length)
-checkbox_upper = tk.Checkbutton(popup, text="Use A-Z", variable=check_upper, command=do_it)
-checkbox_lower = tk.Checkbutton(popup, text="Use a-z", variable=check_lower, command=do_it)
-checkbox_number = tk.Checkbutton(popup, text="Use 0-9", variable=check_number, command=do_it)
-checkbox_symbol = tk.Checkbutton(popup, text="Use !@#$%^&*", variable=check_symbol, command=do_it)
-spinbox_number = tk.Spinbox(popup, from_=1, to=9, width=3, command=do_it)
-spinbox_symbol = tk.Spinbox(popup, from_=1, to=9, width=3, command=do_it)
-label_number = tk.Label(popup, text="How many numbers")
-label_symbol = tk.Label(popup, text="How many symbols")
 
 
 # ---------------------------------
 
 # Layout
-label_password.grid(row=0, column=0, columnspan=3)
-scale_length.grid(row=1, column=0, columnspan=3)
-checkbox_upper.grid(row=2, column=1, sticky=tk.W)
-checkbox_lower.grid(row=3, column=1, sticky=tk.W)
-checkbox_number.grid(row=4, column=1, sticky=tk.W)
-checkbox_symbol.grid(row=5, column=1, sticky=tk.W)
-spinbox_number.grid(row=6, column=2)
-spinbox_symbol.grid(row=7, column=2)
-label_number.grid(row=6, column=0, columnspan=2)
-label_symbol.grid(row=7, column=0, columnspan=2)
+label_title.grid(row=0, column=0, columnspan=3)
+label_password.grid(row=1, column=0, columnspan=3)
+scale_length.grid(row=2, column=0, columnspan=3)
+checkbox_upper.grid(row=3, column=1, sticky=tk.W)
+checkbox_lower.grid(row=4, column=1, sticky=tk.W)
+checkbox_number.grid(row=5, column=1, sticky=tk.W)
+checkbox_symbol.grid(row=6, column=1, sticky=tk.W)
+label_number.grid(row=7, column=0, columnspan=2)
+spinbox_number.grid(row=7, column=2)
+label_symbol.grid(row=8, column=0, columnspan=2)
+spinbox_symbol.grid(row=8, column=2)
+button_close.grid(row=9, column=0, columnspan=3)
 
 # ---------------------------------
 
