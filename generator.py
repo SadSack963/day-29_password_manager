@@ -45,6 +45,8 @@ def do_it():
     global password
     password = ""
     remaining = password_length
+
+    # Get current values
     password_upper = check_upper.get()
     password_lower = check_lower.get()
     password_number = check_number.get()
@@ -52,6 +54,15 @@ def do_it():
     password_number_qty = int(spinbox_number.get())
     password_symbol_qty = int(spinbox_symbol.get())
 
+    # Restrict numbers and symbols to half the password length
+    if password_number and password_number_qty > password_length / 2:
+        password_number_qty = password_length // 2
+        spinbox_number["to"] = password_number_qty
+    if password_symbol and password_symbol_qty > password_length / 2:
+        password_symbol_qty = password_length // 2
+        spinbox_symbol["to"] = password_symbol_qty
+
+    # Generate the password
     if password_symbol:
         for _ in range(0, password_symbol_qty):
             password += choice(list_symbol)
@@ -60,15 +71,15 @@ def do_it():
         for _ in range(0, password_number_qty):
             password += choice(list_number)
         remaining = password_length - len(password)
-    if password_lower:
+    if password_lower and remaining > 0:
         if password_upper:
             qty_lower = randint(1, remaining)
         else:
             qty_lower = remaining
-        for _ in range(0, qty_lower):
+        for _ in range(1, qty_lower):
             password += choice(list_lower)
         remaining = password_length - len(password)
-    if password_upper:
+    if password_upper and remaining > 0:
         for _ in range(0, remaining):
             password = password + choice(list_upper)
     list_password = list(password)
@@ -85,13 +96,13 @@ popup.config(padx=30, pady=30)
 
 length_pwd = tk.IntVar()
 check_upper = tk.IntVar()
-check_upper.set(1)
+check_upper.set(1)  # Default to checked
 check_lower = tk.IntVar()
-check_lower.set(1)
+check_lower.set(1)  # Default to checked
 check_number = tk.IntVar()
 check_symbol = tk.IntVar()
 
-label_password = tk.Label(text="Password", width = 20, height=3, fg="blue", font=("Sergoe UI", 12, "bold"), wraplength=200)
+label_password = tk.Label(text="Password", width=20, height=3, fg="blue", font=("Sergoe UI", 12, "bold"), wraplength=200)
 scale_length = tk.Scale(popup, label="Password Length", from_=6, to=48, length=140, orient=tk.HORIZONTAL, command=scale)
 scale_length.set(password_length)
 checkbox_upper = tk.Checkbutton(popup, text="Use A-Z", variable=check_upper, command=do_it)
