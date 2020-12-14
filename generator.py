@@ -1,154 +1,171 @@
-import tkinter as tk
+import tkinter as tk  # import tkinter classes
 from random import randint, choice, shuffle
 
-TITLE_FONT = ("Sergoe UI", 14, "bold")
+
+TITLE_FONT = ("Sergoe UI", 16, "bold")
 PWD_FONT = ("Sergoe UI", 12, "bold")
 NORMAL_FONT = ("Sergoe UI", 10, "normal")
 LARGE_FONT = ("Sergoe UI", 12, "normal")
 
 
-password_length = 16
-password = ""
-
-# ---------------------------------
-
-# Generate valid password characters from ASCII codes
+# Lists of valid password characters
 list_upper = []
 list_lower = []
 list_number = []
 list_symbol = []
 
-# Generate list of Uppercase characters
-for i in range(65, 91):
-    list_upper.append(chr(i))
 
-# Generate list of Lowercase characters
-for i in range(97, 123):
-    list_lower.append(chr(i))
+def get_list_of_chars():
+    """Generate valid password characters from ASCII codes"""
+    global list_upper, list_lower, list_number, list_symbol
 
-# Generate list of numbers
-for i in range(48, 58):
-    list_number.append(chr(i))
+    # Generate list of Uppercase characters
+    for i in range(65, 91):
+        list_upper.append(chr(i))
 
-# Generate list of symbols
-for i in range(33, 48):
-    list_symbol.append(chr(i))
-for i in range(58, 65):
-    list_symbol.append(chr(i))
-for i in range(91, 97):
-    list_symbol.append(chr(i))
-for i in range(123, 127):
-    list_symbol.append(chr(i))
+    # Generate list of Lowercase characters
+    for i in range(97, 123):
+        list_lower.append(chr(i))
 
+    # Generate list of numbers
+    for i in range(48, 58):
+        list_number.append(chr(i))
 
-# ---------------------------------
-
-def scale(val):
-    # This routine is required because tk.Scale() passes one string value to the called function
-    global password_length
-    password_length = int(val)
-    do_it()
+    # Generate list of symbols
+    for i in range(33, 48):
+        list_symbol.append(chr(i))
+    for i in range(58, 65):
+        list_symbol.append(chr(i))
+    for i in range(91, 97):
+        list_symbol.append(chr(i))
+    for i in range(123, 127):
+        list_symbol.append(chr(i))
 
 
-def do_it():
-    global password
-    password = ""
-    remaining = password_length  # Number of characters in password yet to be filled
+class Popup(tk.Tk):
+    global list_symbol, list_number, list_lower, list_upper
 
-    # Get current values of checkboxes and spinboxes
-    password_upper = check_upper.get()
-    password_lower = check_lower.get()
-    password_number = check_number.get()
-    password_symbol = check_symbol.get()
-    password_number_qty = int(spinbox_number.get())
-    password_symbol_qty = int(spinbox_symbol.get())
+    def __init__(self, master):
+        super(Popup, self).__init__()
 
-    # Restrict numbers and symbols to half the password length
-    if password_number:
-        spinbox_number["to"] = password_length // 2
-    if password_symbol:
-        spinbox_symbol["to"] = password_length // 2
+        # Define variables
+        self.password = ""
+        self.password_length = 16
+        self.password_upper = 1
+        self.password_lower = 1
+        self.password_number = 0
+        self.password_symbol = 0
+        self.password_number_qty = 4
+        self.password_symbol_qty = 2
+        self.qty_lower = 0
+        self.list_password = []
+        self.remaining = 16
 
-    # Generate the password
-    if password_symbol:
-        for _ in range(0, password_symbol_qty):
-            password += choice(list_symbol)
-        remaining = password_length - len(password)
-    if password_number:
-        for _ in range(0, password_number_qty):
-            password += choice(list_number)
-        remaining = password_length - len(password)
-    if password_lower and remaining > 0:
-        if password_upper:
-            qty_lower = randint(1, remaining)
-        else:
-            qty_lower = remaining
-        for _ in range(1, qty_lower):
-            password += choice(list_lower)
-        remaining = password_length - len(password)
-    if password_upper and remaining > 0:
-        for _ in range(0, remaining):
-            password = password + choice(list_upper)
-    list_password = list(password)
-    shuffle(list_password)
-    password = "".join(list_password)
-    label_password["text"] = password
+        # UI Setup
+        self.popup = tk.Toplevel(master)
+        self.popup.title("Password Generator")
+        self.popup.config(padx=30, pady=30)
 
+        self.length_pwd = tk.IntVar()
+        self.check_upper = tk.IntVar()
+        self.check_upper.set(1)  # Default to checked
+        self.check_lower = tk.IntVar()
+        self.check_lower.set(1)  # Default to checked
+        self.check_number = tk.IntVar()
+        self.check_symbol = tk.IntVar()
 
-def close():
-    popup.quit()  # This allows the password to be accessed by main.py
-    popup.destroy()  # Then destroy this script window
-    # but then I can't open the window again !?
+        self.label_title = tk.Label(self.popup, text="Password Generator", pady=5, fg="dark green", font=TITLE_FONT)
+        self.label_password = tk.Label(self.popup, text="Password", width=20, height=3, relief="sunken", bg="#cccccc",
+                                       fg="blue",
+                                       font=PWD_FONT, wraplength=200)
+        self.scale_length = tk.Scale(self.popup, label="Password Length", from_=6, to=48, length=200, font=NORMAL_FONT,
+                                     orient=tk.HORIZONTAL, command=self.scale)
+        self.checkbox_upper = tk.Checkbutton(self.popup, text="Use A-Z", font=NORMAL_FONT, variable=self.check_upper,
+                                             command=self.do_it)
+        self.checkbox_lower = tk.Checkbutton(self.popup, text="Use a-z", font=NORMAL_FONT, variable=self.check_lower,
+                                             command=self.do_it)
+        self.checkbox_number = tk.Checkbutton(self.popup, text="Use 0-9", font=NORMAL_FONT, variable=self.check_number,
+                                              command=self.do_it)
+        self.checkbox_symbol = tk.Checkbutton(self.popup, text="Use !@#$%^&*", font=NORMAL_FONT,
+                                              variable=self.check_symbol,
+                                              command=self.do_it)
+        self.spinbox_number = tk.Spinbox(self.popup, from_=1, to=9, width=3, font=LARGE_FONT, command=self.do_it)
+        self.spinbox_symbol = tk.Spinbox(self.popup, from_=1, to=9, width=3, font=LARGE_FONT, command=self.do_it)
+        self.label_number = tk.Label(self.popup, text="How many numbers", font=NORMAL_FONT, pady=5)
+        self.label_symbol = tk.Label(self.popup, text="How many symbols", font=NORMAL_FONT, pady=5)
+        self.button_close = tk.Button(self.popup, text="Close", font=NORMAL_FONT, command=self.close)
 
+        self.scale_length.set(self.password_length)
 
-# ---------------------------------
+        # ---------------------------------
 
-# UI Setup
+        # Layout
+        self.label_title.grid(row=0, column=0, columnspan=3)
+        self.label_password.grid(row=1, column=0, columnspan=3)
+        self.scale_length.grid(row=2, column=0, columnspan=3)
+        self.checkbox_upper.grid(row=3, column=1, sticky=tk.W)
+        self.checkbox_lower.grid(row=4, column=1, sticky=tk.W)
+        self.checkbox_number.grid(row=5, column=1, sticky=tk.W)
+        self.checkbox_symbol.grid(row=6, column=1, sticky=tk.W)
+        self.label_number.grid(row=7, column=0, columnspan=2)
+        self.spinbox_number.grid(row=7, column=2)
+        self.label_symbol.grid(row=8, column=0, columnspan=2)
+        self.spinbox_symbol.grid(row=8, column=2)
+        self.button_close.grid(row=9, column=0, columnspan=3)
 
-popup = tk.Tk()
-popup.title("Password Generator")
-popup.config(padx=30, pady=30)
+        # ---------------------------------
 
-length_pwd = tk.IntVar()
-check_upper = tk.IntVar()
-check_upper.set(1)  # Default to checked
-check_lower = tk.IntVar()
-check_lower.set(1)  # Default to checked
-check_number = tk.IntVar()
-check_symbol = tk.IntVar()
+        self.popup.mainloop()
 
-label_title = tk.Label(popup, text="-- Password Generator --", pady=5, fg="black", font=TITLE_FONT)
-label_password = tk.Label(popup, text="Password", width=20, height=3, relief="sunken", bg="#cccccc", fg="blue", font=PWD_FONT, wraplength=200)
-scale_length = tk.Scale(popup, label="Password Length", from_=6, to=48, length=200, font=NORMAL_FONT, orient=tk.HORIZONTAL, command=scale)
-checkbox_upper = tk.Checkbutton(popup, text="Use A-Z", font=NORMAL_FONT, variable=check_upper, command=do_it)
-checkbox_lower = tk.Checkbutton(popup, text="Use a-z", font=NORMAL_FONT, variable=check_lower, command=do_it)
-checkbox_number = tk.Checkbutton(popup, text="Use 0-9", font=NORMAL_FONT, variable=check_number, command=do_it)
-checkbox_symbol = tk.Checkbutton(popup, text="Use !@#$%^&*", font=NORMAL_FONT, variable=check_symbol, command=do_it)
-spinbox_number = tk.Spinbox(popup, from_=1, to=9, width=3, font=LARGE_FONT, command=do_it)
-spinbox_symbol = tk.Spinbox(popup, from_=1, to=9, width=3, font=LARGE_FONT, command=do_it)
-label_number = tk.Label(popup, text="How many numbers", font=NORMAL_FONT, pady=5)
-label_symbol = tk.Label(popup, text="How many symbols", font=NORMAL_FONT, pady=5)
-button_close = tk.Button(popup, text="Close", font=NORMAL_FONT, command=close)
+    def scale(self, val):
+        # This routine is required because tk.Scale() passes one string value to the called function
+        self.password_length = int(val)
+        self.do_it()
 
-scale_length.set(password_length)
+    def do_it(self):
+        self.password = ""
+        self.remaining = self.password_length  # Number of characters in password yet to be filled
 
+        # Get current values of checkboxes and spinboxes
+        self.password_upper = self.check_upper.get()
+        self.password_lower = self.check_lower.get()
+        self.password_number = self.check_number.get()
+        self.password_symbol = self.check_symbol.get()
+        self.password_number_qty = int(self.spinbox_number.get())
+        self.password_symbol_qty = int(self.spinbox_symbol.get())
 
-# ---------------------------------
+        # Restrict numbers and symbols to half the password length
+        if self.password_number:
+            self.spinbox_number["to"] = self.password_length // 2
+        if self.password_symbol:
+            self.spinbox_symbol["to"] = self.password_length // 2
 
-# Layout
-label_title.grid(row=0, column=0, columnspan=3)
-label_password.grid(row=1, column=0, columnspan=3)
-scale_length.grid(row=2, column=0, columnspan=3)
-checkbox_upper.grid(row=3, column=1, sticky=tk.W)
-checkbox_lower.grid(row=4, column=1, sticky=tk.W)
-checkbox_number.grid(row=5, column=1, sticky=tk.W)
-checkbox_symbol.grid(row=6, column=1, sticky=tk.W)
-label_number.grid(row=7, column=0, columnspan=2)
-spinbox_number.grid(row=7, column=2)
-label_symbol.grid(row=8, column=0, columnspan=2)
-spinbox_symbol.grid(row=8, column=2)
-button_close.grid(row=9, column=0, columnspan=3)
+        # Generate the password
+        if self.password_symbol:
+            for _ in range(0, self.password_symbol_qty):
+                self.password += choice(list_symbol)
+            self.remaining = self.password_length - len(self.password)
+        if self.password_number:
+            for _ in range(0, self.password_number_qty):
+                self.password += choice(list_number)
+            self.remaining = self.password_length - len(self.password)
+        if self.password_lower and self.remaining > 0:
+            if self.password_upper:
+                self.qty_lower = randint(1, self.remaining)
+            else:
+                self.qty_lower = self.remaining
+            for _ in range(1, self.qty_lower):
+                self.password += choice(list_lower)
+            self.remaining = self.password_length - len(self.password)
+        if self.password_upper and self.remaining > 0:
+            for _ in range(0, self.remaining):
+                self.password = self.password + choice(list_upper)
+        self.list_password = list(self.password)
+        shuffle(self.list_password)
+        self.password = "".join(self.list_password)
+        self.label_password["text"] = self.password
 
-# ---------------------------------
-
-popup.mainloop()
+    def close(self):
+        self.popup.quit()  # This allows the password to be accessed by main.py
+        self.popup.destroy()  # Then destroy this script window
+        # but then I can't open the window again !?
