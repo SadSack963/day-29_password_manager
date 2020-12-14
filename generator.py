@@ -43,6 +43,7 @@ def get_list_of_chars():
 
 
 class Popup(tk.Tk):
+    """Creates a new popup window containing the widgets allowing the user to create a random password"""
     global list_symbol, list_number, list_lower, list_upper
 
     def __init__(self, master):
@@ -76,8 +77,7 @@ class Popup(tk.Tk):
 
         self.label_title = tk.Label(self.popup, text="Password Generator", pady=5, fg="dark green", font=TITLE_FONT)
         self.label_password = tk.Label(self.popup, text="Password", width=20, height=3, relief="sunken", bg="#cccccc",
-                                       fg="blue",
-                                       font=PWD_FONT, wraplength=200)
+                                       fg="blue", font=PWD_FONT, wraplength=200)
         self.scale_length = tk.Scale(self.popup, label="Password Length", from_=6, to=48, length=200, font=NORMAL_FONT,
                                      orient=tk.HORIZONTAL, command=self.scale)
         self.checkbox_upper = tk.Checkbutton(self.popup, text="Use A-Z", font=NORMAL_FONT, variable=self.check_upper,
@@ -87,8 +87,7 @@ class Popup(tk.Tk):
         self.checkbox_number = tk.Checkbutton(self.popup, text="Use 0-9", font=NORMAL_FONT, variable=self.check_number,
                                               command=self.do_it)
         self.checkbox_symbol = tk.Checkbutton(self.popup, text="Use !@#$%^&*", font=NORMAL_FONT,
-                                              variable=self.check_symbol,
-                                              command=self.do_it)
+                                              variable=self.check_symbol, command=self.do_it)
         self.spinbox_number = tk.Spinbox(self.popup, from_=1, to=9, width=3, font=LARGE_FONT, command=self.do_it)
         self.spinbox_symbol = tk.Spinbox(self.popup, from_=1, to=9, width=3, font=LARGE_FONT, command=self.do_it)
         self.label_number = tk.Label(self.popup, text="How many numbers", font=NORMAL_FONT, pady=5)
@@ -123,7 +122,8 @@ class Popup(tk.Tk):
         self.do_it()
 
     def do_it(self):
-        self.password = ""
+        """Create the password every time a widget is altered"""
+        self.password = ""  # Clear out any existing password
         self.remaining = self.password_length  # Number of characters in password yet to be filled
 
         # Get current values of checkboxes and spinboxes
@@ -168,4 +168,3 @@ class Popup(tk.Tk):
     def close(self):
         self.popup.quit()  # This allows the password to be accessed by main.py
         self.popup.destroy()  # Then destroy this script window
-        # but then I can't open the window again !?
