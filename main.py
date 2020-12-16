@@ -68,24 +68,36 @@ def search():
             data = json.load(fp=file)
     except FileNotFoundError:
         # Pop-up messagebox
-        message = messagebox.showinfo(title="File Not Found",
-                                      message="Cannot find file 'data.json'.\nThere are no passwords saved.")
+        messagebox.showinfo(title="File Not Found",
+                            message="Cannot find file 'data.json'.\nThere are no passwords saved.")
     else:
-        try:
-            # Retrieve the website data
+        # try:
+        #     # Retrieve the website data
+        #     email = data[website]["email"]
+        #     password = data[website]["password"]
+        # except KeyError:
+        #     # Pop-up messagebox
+        #     messagebox.showinfo(title=website, message=f"Website {website} not found in file 'data.json'")
+        # else:
+        #     # Pop-up messagebox
+        #     messagebox.showinfo(title=website, message=f"Email: \t\t{email}\nPassword: \t{password}")
+        # finally:
+        #     # Delete the entries in the GUI
+        #     entry_website.delete(0, tk.END)
+        #     entry_password.delete(0, tk.END)
+
+        # Only use try/except block if there is no other easy way to achieve the same result
+        if website in file:
             email = data[website]["email"]
             password = data[website]["password"]
-        except KeyError:
             # Pop-up messagebox
-            message = messagebox.showinfo(title=website, message="Website not found in file 'data.json'")
+            messagebox.showinfo(title=website, message=f"Email: \t\t{email}\nPassword: \t{password}")
         else:
             # Pop-up messagebox
-            message = messagebox.showinfo(title=website,
-                                          message=f"Email: {email}\nPassword: {password}")
-        finally:
-            # Delete the entries in the GUI
-            entry_website.delete(0, tk.END)
-            entry_password.delete(0, tk.END)
+            messagebox.showinfo(title=website, message=f"Website {website} not found in file 'data.json'")
+        # Delete the entries in the GUI
+        entry_website.delete(0, tk.END)
+        entry_password.delete(0, tk.END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #
@@ -102,7 +114,7 @@ label_website = tk.Label(window, text="Website:")
 label_email = tk.Label(window, text="Email / Username:")
 label_password = tk.Label(window, text="Password:")
 
-entry_website = tk.Entry(window, width=35)
+entry_website = tk.Entry(window, width=21)
 entry_website.focus()
 entry_email = tk.Entry(window, width=35)
 entry_email.insert(0, "john@example.com")  # Inserts string just before the character indicated by index.
@@ -118,7 +130,7 @@ canvas.grid(row=0, column=1)
 label_website.grid(row=1, column=0, sticky=tk.E)
 label_email.grid(row=2, column=0, sticky=tk.E)
 label_password.grid(row=3, column=0, sticky=tk.E)
-entry_website.grid(row=1, column=1, columnspan=2, sticky=tk.EW)
+entry_website.grid(row=1, column=1, sticky=tk.EW)
 entry_email.grid(row=2, column=1, columnspan=2, sticky=tk.EW)
 entry_password.grid(row=3, column=1, sticky=tk.EW)
 button_search.grid(row=1, column=2, sticky=tk.EW)
