@@ -38,19 +38,23 @@ def save():
         if response:
             try:
                 # encoding="utf-16" allows extended unicode characters to be written to file
-                # Update JSON file:
+                # Read from JSON file:
                 with open("data.json", mode="r", encoding="utf-8") as file:
                     data = json.load(fp=file)
-                    data.update(new_data)
             except FileNotFoundError:
+                # Create new JSON file, and dump
                 with open("data.json", mode="w", encoding="utf-8") as file:
                     json.dump(new_data, fp=file, indent=4)
             else:
+                # Update JSON data:
+                data.update(new_data)
+                # Dump to JSON file:
                 with open("data.json", mode="w", encoding="utf-8") as file:
                     json.dump(data, fp=file, indent=4)
-
-            entry_website.delete(0, tk.END)
-            entry_password.delete(0, tk.END)
+            finally:
+                # Delete the entries in the GUI
+                entry_website.delete(0, tk.END)
+                entry_password.delete(0, tk.END)
 
 
 # ---------------------------- UI SETUP ------------------------------- #

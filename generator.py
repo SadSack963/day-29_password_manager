@@ -1,6 +1,6 @@
 import tkinter as tk  # import tkinter classes
 from random import randint, choice, shuffle
-
+# import string
 
 TITLE_FONT = ("Sergoe UI", 16, "bold")
 PWD_FONT = ("Sergoe UI", 12, "bold")
@@ -16,6 +16,17 @@ list_symbol = []
 
 
 def get_list_of_chars():
+    # https://www.journaldev.com/23788/python-string-module
+    # print(string.ascii_letters)
+    # print(string.ascii_lowercase)
+    # print(string.ascii_uppercase)
+    # print(string.digits)
+    # print(string.hexdigits)
+    # print(string.octdigits)
+    # print(string.whitespace)  # ' \t\n\r\x0b(VT)\x0c(FF)'
+    # print(string.punctuation)  # !"#$%&'()*+,-./:;<=>?@[\]^_`{|}~
+    # print(string.printable)
+
     """Generate valid password characters from ASCII codes"""
     global list_upper, list_lower, list_number, list_symbol
 
