@@ -42,16 +42,15 @@ def save():
                 with open("data.json", mode="r", encoding="utf-8") as file:
                     data = json.load(fp=file)
             except FileNotFoundError:
-                # Create new JSON file, and dump
-                with open("data.json", mode="w", encoding="utf-8") as file:
-                    json.dump(new_data, fp=file, indent=4)
+                # Create a new JSON data dictionary from new_data
+                data = new_data
             else:
-                # Update JSON data:
+                # Update existing JSON data dictionary with new_data:
                 data.update(new_data)
-                # Dump to JSON file:
+            finally:
+                # Dump the JSON data dictionary to file:
                 with open("data.json", mode="w", encoding="utf-8") as file:
                     json.dump(data, fp=file, indent=4)
-            finally:
                 # Delete the entries in the GUI
                 entry_website.delete(0, tk.END)
                 entry_password.delete(0, tk.END)
