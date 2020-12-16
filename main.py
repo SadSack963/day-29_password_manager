@@ -2,6 +2,7 @@ import tkinter as tk  # import tkinter classes
 # NOTE: messagebox is a separate module from tkinter which is not imported unless specified
 from tkinter import messagebox
 import pyperclip
+import json
 import generator
 
 TITLE_FONT = ("Sergoe UI", 14, "bold")
@@ -27,14 +28,27 @@ def save():
     website = entry_website.get()
     email = entry_email.get()
     password = entry_password.get()
+
+    new_data = {website: {"email": email, "password": password}}
+
     if len(website) < 1 or len(email) < 1 or len(password) < 1:
         messagebox.showinfo(title="Error", message="Please fill in all fields.")
     else:
         response = messagebox.askokcancel(title="Please confirm", message=f"Website: {website}\nEmail: {email}\nPassword: {password}\n\nOK to save?")
         if response:
-            # encoding="utf-16" allows extended unicode characters to be written to file
-            with open("data.txt", mode="a", encoding="utf-8") as file:
-                file.write(website + ", " + email + ", " + password + "\n")
+            try:
+                # encoding="utf-16" allows extended unicode characters to be written to file
+                # Update JSON file:
+                with open("data.json", mode="r", encoding="utf-8") as file:
+                    data = json.load(fp=file)
+                    data.update(new_data)
+            except FileNotFoundError:
+                with open("data.json", mode="w", encoding="utf-8") as file:
+                    json.dump(new_data, fp=file, indent=4)
+            else:
+                with open("data.json", mode="w", encoding="utf-8") as file:
+                    json.dump(data, fp=file, indent=4)
+
             entry_website.delete(0, tk.END)
             entry_password.delete(0, tk.END)
 
