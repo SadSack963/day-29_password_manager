@@ -56,6 +56,38 @@ def save():
                 entry_password.delete(0, tk.END)
 
 
+# ---------------------------- SEARCH WEBSITE ------------------------------- #
+
+def search():
+    website = entry_website.get()
+
+    try:
+        # encoding="utf-16" allows extended unicode characters to be written to file
+        # Read from JSON file:
+        with open("data.json", mode="r", encoding="utf-8") as file:
+            data = json.load(fp=file)
+    except FileNotFoundError:
+        # Pop-up messagebox
+        message = messagebox.showinfo(title="File Not Found",
+                                      message="Cannot find file 'data.json'.\nThere are no passwords saved.")
+    else:
+        try:
+            # Retrieve the website data
+            email = data[website]["email"]
+            password = data[website]["password"]
+        except KeyError:
+            # Pop-up messagebox
+            message = messagebox.showinfo(title=website, message="Website not found in file 'data.json'")
+        else:
+            # Pop-up messagebox
+            message = messagebox.showinfo(title=website,
+                                          message=f"Email: {email}\nPassword: {password}")
+        finally:
+            # Delete the entries in the GUI
+            entry_website.delete(0, tk.END)
+            entry_password.delete(0, tk.END)
+
+
 # ---------------------------- UI SETUP ------------------------------- #
 
 window = tk.Tk()
@@ -76,6 +108,7 @@ entry_email = tk.Entry(window, width=35)
 entry_email.insert(0, "john@example.com")  # Inserts string just before the character indicated by index.
 entry_password = tk.Entry(window, width=21)
 
+button_search = tk.Button(window, text="Search", command=search)
 button_generate = tk.Button(window, text="Generate Password", command=generate)
 button_add = tk.Button(window, text="Add", width=36, command=save)
 
@@ -88,6 +121,7 @@ label_password.grid(row=3, column=0, sticky=tk.E)
 entry_website.grid(row=1, column=1, columnspan=2, sticky=tk.EW)
 entry_email.grid(row=2, column=1, columnspan=2, sticky=tk.EW)
 entry_password.grid(row=3, column=1, sticky=tk.EW)
+button_search.grid(row=1, column=2, sticky=tk.EW)
 button_generate.grid(row=3, column=2, sticky=tk.EW)
 button_add.grid(row=4, column=1, columnspan=2, sticky=tk.EW)
 
